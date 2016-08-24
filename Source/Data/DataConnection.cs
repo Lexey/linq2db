@@ -314,15 +314,18 @@ namespace LinqToDB.Data
 			}
 		}
 
-		static object _isInitialized;
+		static volatile bool _isInitialized;
+        static object _initLock = new object();
 
 		static void InitConfig()
 		{
-		    LazyInitializer.EnsureInitialized(ref _isInitialized, () =>
+		    if (_isInitialized) return;
+		    lock (_initLock)
 		    {
-		        InitConnectionStrings();
-		        return new object();
-		    });
+		        if (_isInitialized) return;
+                InitConnectionStrings();
+		        _isInitialized = true;
+		    }
 		}
 
 		static readonly ConcurrentDictionary<string,IDataProvider> _dataProviders =

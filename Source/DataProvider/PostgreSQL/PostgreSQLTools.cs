@@ -86,6 +86,8 @@ namespace LinqToDB.DataProvider.PostgreSQL
 						}
 						catch (Exception)
 						{
+                            // fallback to the old provider
+						    return _postgreSQLDataProvider;
 						}
 					}
 
